@@ -1,4 +1,0 @@
-multi_versions: True
-dst_root: C:\Program Files\Pixologic
-dst_variant_pattern: '^ZBrush\s()'
-dst_subdir: ZData\BrushPresets
