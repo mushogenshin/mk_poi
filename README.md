@@ -10,9 +10,9 @@ A simple, yet overkill, installer for CG softwares' preferences, custom brushes/
 
 - It's not a library nor a collection of any software's preferences/presets/custom brushes/custom materials. "Template packages" are provided, but only served as placeholders.
 
-![](./img/mk_prefs_overkill_installer_mascot.png)
-
 ## Why the installer?
+
+![](./img/mk_prefs_overkill_installer_mascot.png)
 
 - I strongly believe in customizing and optimizing one's own workflow as much as possible in softwares of daily usage. The disadvantage of customization, of course, however, is the inevitable feeling of being disabled when you have to work on anybody else's machine, but as these days I no longer have to come to other fellow artists' machines to supervise their works, I gain the luxury of almost always using my own machine to work. Therefore, the urge to customize every detail of my workflow becomes stronger.
 - Managing preferences between various Autodesk Maya versions is not as much of a trouble as doing so with ZBrush. As far as how much I've been playing with ZScripting lately, I feel the ability to tweak the environment variables in order for ZBrush to recognize custom paths and look for custom "stuffs" (e.g. brushes, materials, plugins, etc.) is quite limited: normally one has to install all those custom things directly into the ZBrush installation folders! And for brushes, materials, plugins, etc., you have to copy each set to a corresponding subdirectory, otherwise they won't be found.
