@@ -1,4 +1,7 @@
 # mk_prefs_overkill_installer
+
+![](./img/mk_prefs_overkill_installer_mascot.png)
+
 Simple, yet overkill, installer for CG softwares' preferences, custom brushes/materials, etc.
 
 
