@@ -1,9 +1,5 @@
 # mk_prefs_overkill_installer
-
-![](./img/mk_prefs_overkill_installer_mascot.png)
-
-Simple, yet overkill, installer for CG softwares' preferences, custom brushes/materials, etc.
-
+A simple, yet overkill, installer for CG softwares' preferences, custom brushes/materials, etc.
 
 ## What is this?
 
@@ -13,6 +9,8 @@ Simple, yet overkill, installer for CG softwares' preferences, custom brushes/ma
 ## What is this not?
 
 - It's not a library nor a collection of any software's preferences/presets/custom brushes/custom materials. "Template packages" are provided, but only served as placeholders.
+
+![](./img/mk_prefs_overkill_installer_mascot.png)
 
 ## Why the installer?
 
