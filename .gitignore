@@ -1,2 +1,6 @@
 private_packages
 test_packages
+img/merch
+
+*.psd
+*.ico
