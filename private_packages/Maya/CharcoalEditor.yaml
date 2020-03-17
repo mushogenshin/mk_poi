@@ -1,0 +1,4 @@
+multi_versions: False
+dst_root: '%USERPROFILE%/Documents/maya'
+dst_variant_pattern: ''
+dst_subdir: plug-ins

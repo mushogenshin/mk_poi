@@ -1,0 +1,5 @@
+multi_versions: True
+dst_root: '%USERPROFILE%/Documents'
+dst_variant_pattern: '^maya'
+dst_variant_pattern_2: '^\d{4}$'
+dst_subdir: scripts

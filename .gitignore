@@ -1,6 +1,4 @@
-private_packages
-test_packages
-ilm_packages
+work_packages
 img/merch
 
 *.psd
