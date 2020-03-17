@@ -1,0 +1,39 @@
+global proc shelf_miniTools2 () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "miniTools2" 
+        -enableBackground 0
+        -align "center" 
+        -label "miniTools2" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "mnT2" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.8 
+        -image "//vietsap002/projects/ILM/lib/scripts/miniTools2/icons/miniTools2_32.png" 
+        -image1 "//vietsap002/projects/ILM/lib/scripts/miniTools2/icons/miniTools2_32.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import miniTools2_ui as mnT2_ui\nreload(mnT2_ui)\n\nif __name__ == \"__main__\":\n    try:\n        mnT2DialogInst.close()\n        mnT2DialogInst.deleteLater()\n    except:\n        pass\n\n    mnT2DialogInst = mnT2_ui.mnT2Dialog()\n    mnT2DialogInst.show()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+
+} 
