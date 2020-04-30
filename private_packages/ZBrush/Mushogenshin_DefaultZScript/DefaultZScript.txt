@@ -1,6 +1,0 @@
-//startup
-
-[If,1,
-[IPress,Macro:Macros:0Mushogenshin_Macros:Setup Me Senpai]
-]
-[pd]

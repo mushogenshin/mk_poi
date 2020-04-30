@@ -1,4 +1,0 @@
-multi_versions: True
-dst_root: '%USERPROFILE%/Documents/maya'
-dst_variant_pattern: '^20\d\d$'
-dst_subdir: scripts

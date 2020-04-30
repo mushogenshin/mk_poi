@@ -1,9 +1,0 @@
-//ZBRUSH MACRO - Recorded in ZBrush version 2019
-[IButton,???,"Turn off Sculptris before switching to hPolish brush",
-[IShowActions,0]
-[IConfig,2019]
-
-[IUnPress, Stroke:SculptrisPro]
-[IPress,Brush:hPolish]
-
-]

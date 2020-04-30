@@ -1,7 +1,11 @@
 __pycache__
 img
+src_img
 build
 walk-thru_videos
+packages_private
+packages_work
+packages_test
 *.py
 
 *.psd

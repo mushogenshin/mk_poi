@@ -1,9 +1,0 @@
-//ZBRUSH MACRO - Recorded in ZBrush version 2019
-[IButton,???,"Delete Undo History before performing QuickSave",
-[IShowActions,0]
-[IConfig,2019]
-
-[IPress, Edit:Tool:DelUH]
-[IPress, QuickSave]
-
-]

@@ -1,4 +1,0 @@
-multi_versions: True
-dst_root: '%USERPROFILE%/Documents'
-dst_variant_pattern: '^maya'
-dst_subdir: modules
