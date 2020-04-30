@@ -1,11 +1,12 @@
 __pycache__
-img
+images
 src_img
 build
 walk-thru_videos
 packages_private
 packages_work
 packages_test
+download_link.txt
 *.py
 
 *.psd
