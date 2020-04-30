@@ -1,11 +1,12 @@
 __pycache__
-images
+img
 src_img
 build
+dist
 walk-thru_videos
 packages_private
 packages_work
-packages_test
+packages_sandbox
 download_link.txt
 *.py
 

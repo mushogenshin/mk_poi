@@ -1,7 +1,9 @@
 # mk_prefs_overkill_installer
-A simple, yet overkill, installer for CG softwares' preferences, custom brushes/materials, etc.
+A simple installer for CG softwares' preferences, custom brushes/materials, etc.
 
-![](./img/mk_prefs_overkill_installer_mascot.png)
+<p align="center">
+<img src="./img/mk_poi_banner.png">
+</p>
 
 ## What is this?
 
@@ -35,10 +37,12 @@ It'd be best shown by examples first:
     multi_versions: True
     dst_root: C:\Program Files\Pixologic
     dst_variant_pattern: '^ZBrush\s()'
+    dst_variant_pattern_2: ''
     dst_subdir: ZStartup\ZPlugs64
 
 - `multi_versions`: set this to `False` if you only want the installer to execute for a specific software version.
 - `dst_root`: the path to right before where the variation of versions happen, e.g. "ZBrush 4R8", "ZBrush 2018", "ZBrush 2019", are "variants", and the dst_root should be where all these variants reside.
-- `dst_variant_pattern`: the regular expression used to distinguish what subdirectory is valid and invalid when the installer search right beneath the dst_root, e.g. for Maya that is "^20\d\d$" to target the "2018", "2019", etc., subdirectories.
+- `dst_variant_pattern`: the regular expression used to distinguish what subdirectory is valid and invalid when the installer search right beneath the dst_root, e.g. for Maya that is `^\d{4}$` to target the "2018", "2019", etc., subdirectories.
     - If `muti_versions` is set to `False`, just leave this `dst_variant_pattern` blank, and put the exact version you want in the `dst_root`, e.g.: set `dst_root` to `C:\Program Files\Pixologic\2020` if you only want to perform install only for ZBrush 2020.
+- `dst_variant_pattern_2`: use this in case you have to navigate down a path with variant pattern twice, e.g. `Adobe Photoshop 2020/Adobe Photoshop 2020 Settings` has two subdirectories containing `\d{4}` pattern.
 - `dst_subdir`: the appendage to the path to navigate to the final destination. For Maya scripts this usually is "scripts". With ZBrush this needs to be tweaked for packages of brushes, materials, etc., (templates are provided). Just leave this empty if there's no need to go levels deeper than the `dst_root`.
