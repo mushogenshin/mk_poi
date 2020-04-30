@@ -1,4 +1,10 @@
+__pycache__
 img
+build
+walk-thru_videos
+*.py
 
 *.psd
 *.ico
+*.spec
+*.lnk
