@@ -7,9 +7,13 @@ packages_private
 packages_work
 packages_sandbox
 download_link.txt
-*.py
 
 *.psd
 *.ico
 *.spec
 *.lnk
+
+.venv/
+lib/
+
+**/.DS_Store
