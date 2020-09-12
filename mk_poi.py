@@ -20,6 +20,7 @@ DestinationMetadata = namedtuple("DestinationMetadata", ["version", "path"])
 class MkPackage(object):
 
 	_OS = platform.system()  # Windows; Darwin; Linux;
+	_do_copy = True
 
 	def __init__(self, config_file):
 		"""
@@ -45,7 +46,7 @@ class MkPackage(object):
 					pkg_name, self._METADATA['has_contents']
 				))
 
-	def install(self, do_copy=True, show_results=False):
+	def install(self, show_results=False):
 		"""
 		Perform based on an iterable all_destinations_metadata
 		"""
@@ -54,8 +55,7 @@ class MkPackage(object):
 			multiple_versions=self._METADATA.get('multi_versions', False)
 		)
 
-		if do_copy:
-			# Do the copy
+		if MkPackage._do_copy:  # Do the copy
 			for dst_metadata in all_destinations_metadata:
 				try:
 					logger.debug('------Target: {}'.format(dst_metadata.path))
@@ -65,15 +65,20 @@ class MkPackage(object):
 				else:
 					logger.debug('--------Copied package contents for version "{}".\n'.format(dst_metadata.version))
 
-		def reveal():
-			pass
-		
-		if show_results:
+		def get_reveal_command(dst_metadata):
 			if MkPackage._OS == "Windows":
 				# Open Windows explorer
-				for dst_metadata in all_destinations_metadata:
-					subprocess.Popen(['explorer', str(PureWindowsPath(dst_metadata.path))])
-			# TODO: Open Finder on MacOS
+				return ['explorer', str(PureWindowsPath(dst_metadata.path))]
+			elif MkPackage._OS == "Darwin":
+				# Open Finder
+				return ['open', '-R', dst_metadata.path.as_posix()]
+		
+		if show_results:
+			for dst_metadata in all_destinations_metadata:
+				try:
+					subprocess.Popen(get_reveal_command(dst_metadata))
+				except Exception:
+					pass
 
 	def expand_destination(self, multiple_versions):
 		"""
@@ -146,7 +151,7 @@ class MkPackage(object):
 										root_sub_dir.mkdir(parents=True)
 
 									all_destinations_metadata.append(DestinationMetadata(re_match_2.string, root_sub_dir_nested))
-				logger.debug('----Destinations fully expanded for: multiple versions')
+				logger.debug('----Destinations fully expanded for: multiple versions\n')
 
 		# logger.debug('--All destinations: \n')
 		# for dst_metadata in all_destinations_metadata:
@@ -155,10 +160,10 @@ class MkPackage(object):
 		return tuple(all_destinations_metadata)
 
 
-def install_all(target_dir=None, do_copy=True, show_results=False):
+def install_all(target_dir=None, show_results=False):
 	"""
 	:parm Path target_dir: whether to look for a specific target folder, 
-						if False: automatically search recursively within _CUR_DIR
+						if yields False: automatically search recursively within _CUR_DIR
 	"""
 	# Look for valid packages to install
 	_CFG_FILE_EXT = '.yaml'
@@ -184,8 +189,15 @@ def install_all(target_dir=None, do_copy=True, show_results=False):
 			src_path_trimmed = (src_root / "../../..").resolve()
 			logger.debug('--Source root: ./{}'.format(src_root.relative_to(src_path_trimmed)))
 
-			mk_package.install(do_copy, show_results)
-			
+			mk_package.install(show_results)
+
+
+def get_current_username():
+	if MkPackage._OS == "Windows":
+		return os.environ["USERNAME"]
+	elif MkPackage._OS == "Darwin":
+		return os.environ["USER"]
+
 
 if __name__ == '__main__':
 
@@ -197,8 +209,15 @@ if __name__ == '__main__':
 		pass
 	else:
 		# Running from Python file
-		# SANDBOX_DIR = 'packages_private/ZBrush'
-		# install_all(target_dir=(_CUR_DIR / SANDBOX_DIR), do_copy=True, show_results=False)
-		install_all(do_copy=True, show_results=False)
+		_dev_usernames = ("mushogenshin",)
+
+		if get_current_username() not in _dev_usernames:
+			logger.info("Installing from current directory recursively\n")
+			install_all()
+		else:
+			logger.info("Installing from given targeted directory recursively\n")
+			SANDBOX_DIR = 'packages_private/ZBrush'
+			MkPackage._do_copy = True
+			install_all(target_dir=(_CUR_DIR / SANDBOX_DIR), show_results=False)
 
 	pass
