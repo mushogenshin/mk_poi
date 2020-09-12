@@ -1,4 +1,11 @@
 multi_versions: True
-dst_root: C:/Program Files/Pixologic
-dst_variant_pattern: '^ZBrush\s()'
-dst_subdir: ZStartup/Materials
+
+Windows:
+  dst_root: C:/Program Files/Pixologic
+  dst_variant_pattern: '^ZBrush\s()'
+  dst_subdir: ZStartup/Materials
+
+Darwin:
+  dst_root: /Applications
+  dst_variant_pattern: '^ZBrush\s()'
+  dst_subdir: ZStartup/Materials

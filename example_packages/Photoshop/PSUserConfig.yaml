@@ -1,5 +1,7 @@
 multi_versions: True
-dst_root: '%APPDATA%/Adobe'
-dst_variant_pattern: '^Adobe Photoshop'
-dst_variant_pattern_2: 'Adobe Photoshop CC \d{4} Settings'
-dst_subdir: ''
+
+Windows:
+  dst_root: '%APPDATA%/Adobe'
+  dst_variant_pattern: '^Adobe Photoshop'
+  dst_variant_pattern_2: 'Adobe Photoshop CC \d{4} Settings'
+  dst_subdir: ''

@@ -8,11 +8,13 @@ import subprocess
 import logging
 from pathlib import Path, PureWindowsPath
 from distutils import dir_util
+from collections import namedtuple
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 _CUR_DIR = Path(sys.argv[0]).parent  # use this instead of __file__ as on Windows we also build with pyinstaller
+DestinationMetadata = namedtuple("DestinationMetadata", ["version", "path"])
 
 
 class MkPackage(object):
@@ -35,37 +37,42 @@ class MkPackage(object):
 				self._METADATA['name'] = pkg_name
 				# validity is if a folder with a same name exists
 				self._METADATA['src_root'] = config_file.with_name(config_file.stem)
-				self._METADATA['is_valid'] = self._METADATA['src_root'].exists()
+				self._METADATA['has_contents'] = self._METADATA['src_root'].exists()
 			except yaml.YAMLError as e:
 				logger.error('Unable to parse config file for package "{}" due to: {}.'.format(pkg_name, e))
 			else:
-				logger.debug('MkPackage "{}" initialized successfully. Is valid: {}'.format(
-					pkg_name, self._METADATA['is_valid']
+				logger.debug('Initialized MkPackage "{}". Package has contents: {}'.format(
+					pkg_name, self._METADATA['has_contents']
 				))
 
 	def install(self, do_copy=True, show_results=False):
 		"""
-		Perform based on an iterable dst_paths
+		Perform based on an iterable all_destinations_metadata
 		"""
 		# Expand the destination depending on whether mutiple-versions or not
-		dst_paths = self.expand_destination(multiple_versions=self._METADATA['multi_versions'])
+		all_destinations_metadata = self.expand_destination(
+			multiple_versions=self._METADATA.get('multi_versions', False)
+		)
 
 		if do_copy:
 			# Do the copy
-			for dst_path in dst_paths:
+			for dst_metadata in all_destinations_metadata:
 				try:
-					logger.debug('----Destination: {}'.format(dst_path[-1]))
-					dir_util.copy_tree(self._METADATA['src_root'].as_posix(), dst_path[-1].as_posix())
+					logger.debug('------Target: {}'.format(dst_metadata.path))
+					dir_util.copy_tree(self._METADATA['src_root'].as_posix(), dst_metadata.path.as_posix())
 				except Exception as e:
-					logger.warning('------Failed to install for version "{}" due to: {}.'.format(dst_path[0], e))
+					logger.warning('--------Failed to copy contents for version "{}" due to: {}.\n'.format(dst_metadata.version, e))
 				else:
-					logger.debug('------Installation completed for version "{}".'.format(dst_path[0]))
+					logger.debug('--------Copied package contents for version "{}".\n'.format(dst_metadata.version))
+
+		def reveal():
+			pass
 		
 		if show_results:
 			if MkPackage._OS == "Windows":
 				# Open Windows explorer
-				for dst_path in dst_paths:
-					subprocess.Popen(['explorer', str(PureWindowsPath(dst_path[-1]))])
+				for dst_metadata in all_destinations_metadata:
+					subprocess.Popen(['explorer', str(PureWindowsPath(dst_metadata.path))])
 			# TODO: Open Finder on MacOS
 
 	def expand_destination(self, multiple_versions):
@@ -73,21 +80,22 @@ class MkPackage(object):
 		:return: collection of destination paths
 		:rtype: tuple of tuple, e.g. (('ZBrush 2018', Path('/path/to/dst')),)
 		"""
-		dst_paths = []  # result container
+		all_destinations_metadata = []  # result container
 
-		os_pkg_metadata = self._METADATA.get(MkPackage._OS, {})
-		if not os_pkg_metadata:
-			return dst_paths
+		os_dst_metadata = self._METADATA.get(MkPackage._OS, {})
+		if not os_dst_metadata:
+			logger.warning("Destination metadata not found for {}. Skipped.\n".format(MkPackage._OS))
+			return all_destinations_metadata
 
-		dst_root = os_pkg_metadata.get('dst_root', "")
-		dst_variant_pattern = os_pkg_metadata.get('dst_variant_pattern', "")
-		dst_variant_pattern_2 = os_pkg_metadata.get('dst_variant_pattern_2', "")
-		dst_subdir = os_pkg_metadata.get('dst_subdir', "")
+		dst_root = os_dst_metadata.get('dst_root', "")
+		dst_variant_pattern = os_dst_metadata.get('dst_variant_pattern', "")
+		dst_variant_pattern_2 = os_dst_metadata.get('dst_variant_pattern_2', "")
+		dst_subdir = os_dst_metadata.get('dst_subdir', "")
 		dst_root = Path(os.path.expandvars(dst_root))  # expand the env vars if necessary
 
-		print("DESTINATION ROOT:", dst_root)
+		logger.debug("----Expanded destination root: {}".format(dst_root))
 		if not dst_root.exists():
-			logger.warning('--Non-existent destination root. Skipped.')
+			logger.warning('------Non-existent destination root. Skipped.\n')
 		else:
 			if not multiple_versions:
 				# Single version, just concat the path, e.g.:
@@ -99,15 +107,15 @@ class MkPackage(object):
 					try:
 						root_sub_dir.mkdir(parents=True)
 					except Exception as e:
-						logger.error('Unable to create sub-directory due to: {}'.format(e))
+						logger.error('------Unable to create sub-directory due to: {}'.format(e))
 					
 				version_name = dst_root.name
 				# supports for proper name logging
 				if dst_variant_pattern:
 					version_name = dst_variant_pattern
 
-				dst_paths.append((version_name, root_sub_dir))
-				logger.debug('--Expanded destination for: single version')
+				all_destinations_metadata.append(DestinationMetadata(version_name, root_sub_dir))
+				logger.debug('----Destination fully expanded for: single version')
 			else:
 				# Investigate subdirs by searching the provided regex pattern
 				for root_sub_dir in dst_root.glob('*'):
@@ -123,7 +131,7 @@ class MkPackage(object):
 							if not root_sub_dir.exists():
 								root_sub_dir.mkdir(parents=True)
 
-							dst_paths.append((re_match.string, root_sub_dir))
+							all_destinations_metadata.append(DestinationMetadata(re_match.string, root_sub_dir))
 						else:
 							# Need to go one more level deep, e.g. Maya
 							for root_sub_dir_nested in root_sub_dir.glob('*'):
@@ -137,14 +145,14 @@ class MkPackage(object):
 									if not root_sub_dir.exists():
 										root_sub_dir.mkdir(parents=True)
 
-									dst_paths.append((re_match_2.string, root_sub_dir_nested))
-				logger.debug('--Expanded destinations for: multiple versions')
+									all_destinations_metadata.append(DestinationMetadata(re_match_2.string, root_sub_dir_nested))
+				logger.debug('----Destinations fully expanded for: multiple versions')
 
 		# logger.debug('--All destinations: \n')
-		# for dst_path in dst_paths:
-		# 	logger.debug('----{}'.format(str(dst_path)))
+		# for dst_metadata in all_destinations_metadata:
+		# 	logger.debug('----{}'.format(str(dst_metadata)))
 
-		return tuple(dst_paths)
+		return tuple(all_destinations_metadata)
 
 
 def install_all(target_dir=None, do_copy=True, show_results=False):
@@ -159,15 +167,15 @@ def install_all(target_dir=None, do_copy=True, show_results=False):
 	_CUR_DIR = target_dir if target_dir else _CUR_DIR
 
 	pkg_cfgs = tuple(_CUR_DIR.rglob('*' + _CFG_FILE_EXT))
-	logger.debug('\n***Found {} config file(s).\n'.format(len(pkg_cfgs)))
+	logger.debug('***Found {} config file(s).\n'.format(len(pkg_cfgs)))
 
 	for pkg_cfg in pkg_cfgs:
 
 		mk_package = MkPackage(pkg_cfg)  # new MkPackage object from the config file
 
-		if mk_package._METADATA['is_valid']:  # must at least has the folder data
+		if mk_package._METADATA['has_contents']:  # must at least has the folder data
 
-			logger.debug('--Reading package "{}" on {}...'.format(
+			logger.debug('--Reading package metadata of "{}" on {}'.format(
 				mk_package._METADATA['name'], MkPackage._OS
 			))
 
@@ -192,6 +200,5 @@ if __name__ == '__main__':
 		# SANDBOX_DIR = 'packages_private/ZBrush'
 		# install_all(target_dir=(_CUR_DIR / SANDBOX_DIR), do_copy=True, show_results=False)
 		install_all(do_copy=True, show_results=False)
-		pass
 
 	pass
