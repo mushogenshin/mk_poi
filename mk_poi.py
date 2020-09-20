@@ -6,7 +6,7 @@ import re
 import time
 import subprocess
 import logging
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 from distutils import dir_util
 from collections import namedtuple
 
@@ -67,6 +67,7 @@ class MkPackage(object):
 
 		def get_reveal_command(dst_metadata):
 			if MkPackage._OS == "Windows":
+				from pathlib import PureWindowsPath
 				# Open Windows explorer
 				return ['explorer', str(PureWindowsPath(dst_metadata.path))]
 			elif MkPackage._OS == "Darwin":
@@ -216,7 +217,7 @@ if __name__ == '__main__':
 			install_all()
 		else:
 			logger.info("Installing from given targeted directory recursively\n")
-			SANDBOX_DIR = 'packages_private/ZBrush'
+			SANDBOX_DIR = 'packages_private'
 			MkPackage._do_copy = True
 			install_all(target_dir=(_CUR_DIR / SANDBOX_DIR), show_results=False)
 
