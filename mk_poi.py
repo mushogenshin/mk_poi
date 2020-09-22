@@ -201,16 +201,14 @@ def get_current_username():
 
 
 if __name__ == '__main__':
-
 	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 		# Called from compiled .exe on Windows
-		# SLEEP = 30
-		# install_all()
-		# time.sleep(SLEEP)
-		pass
+		SLEEP = 30
+		install_all()
+		time.sleep(SLEEP)
 	else:
 		# Running from Python file
-		_dev_usernames = ("mushogenshin",)
+		_dev_usernames = ("mushogenshin", "hoans")
 
 		if get_current_username() not in _dev_usernames:
 			logger.info("Installing from current directory recursively\n")
@@ -220,5 +218,3 @@ if __name__ == '__main__':
 			SANDBOX_DIR = 'packages_private'
 			MkPackage._do_copy = True
 			install_all(target_dir=(_CUR_DIR / SANDBOX_DIR), show_results=False)
-
-	pass

@@ -3,9 +3,9 @@ src_img
 build
 dist
 walk-thru_videos
-packages_private
-packages_work
-packages_sandbox
+mk_poi_packages
+obsolete
+
 download_link.txt
 
 *.psd
