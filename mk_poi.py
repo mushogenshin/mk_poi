@@ -215,6 +215,6 @@ if __name__ == '__main__':
 			install_all()
 		else:
 			logger.info("Installing from given targeted directory recursively\n")
-			SANDBOX_DIR = 'packages_private'
+			SANDBOX_DIR = 'mk_poi_packages'
 			MkPackage._do_copy = True
 			install_all(target_dir=(_CUR_DIR / SANDBOX_DIR), show_results=False)
