@@ -1,4 +1,6 @@
 multi_versions: True
-dst_root: '%APPDATA%/Adobe'
-dst_variant_pattern: '^Adobe Photoshop'
-dst_subdir: Presets/Brushes
+
+Windows:
+  dst_root: '%APPDATA%/Adobe'
+  dst_variant_pattern: '^Adobe Photoshop'
+  dst_subdir: Presets/Brushes
